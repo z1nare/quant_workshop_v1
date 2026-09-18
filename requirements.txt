@@ -1,0 +1,12 @@
+# Tested environment: Python 3.12 (also CI-tested on 3.11). See docs/verification_report.md for exact versions.
+numpy>=1.26,<3
+pandas>=2.2,<3
+scikit-learn>=1.5,<2
+matplotlib>=3.8,<4
+joblib>=1.3
+ipywidgets>=8.1,<9
+alpaca-py>=0.40,<1
+streamlit>=1.40,<2
+python-dotenv>=1.0
+jupyterlab>=4.2
+ipykernel>=6.29

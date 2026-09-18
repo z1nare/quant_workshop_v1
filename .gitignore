@@ -1,0 +1,26 @@
+# secrets and runtime state
+.env
+state/
+logs/
+*.log
+exports/
+!exports/.gitkeep
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+# notebooks
+.ipynb_checkpoints/
+notebooks/*_executed.ipynb
+notebooks/outputs/
+# editors / OS
+.DS_Store
+.vscode/
+.idea/
+.claude/
+workspace/

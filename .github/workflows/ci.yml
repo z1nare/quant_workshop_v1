@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      - name: Data matches generator
+        run: python generate_data.py --check
+      - name: Notebooks in sync with source
+        run: python notebooks/build_notebooks.py --check
+      - name: Unit and integration tests (mocked broker, no credentials)
+        env:
+          MPLBACKEND: Agg
+        run: pytest -q -m "not slow"
+      - name: Execute notebooks from a clean kernel (offline)
+        env:
+          MPLBACKEND: Agg
+        run: pytest -q -m slow
+      - name: Exported application runs in a clean environment
+        env:
+          MPLBACKEND: Agg
+        run: |
+          python -c "from quantsoc.reference_bundle import build_reference_bundle; print(build_reference_bundle('exports/reference_bundle'))"
+          python -m venv /tmp/clean && /tmp/clean/bin/pip install -q -r exports/reference_bundle/requirements.txt
+          cd exports/reference_bundle && /tmp/clean/bin/python run_trader.py --mode replay --cycles 40 --speed 1000
+          test -f state/trading_state.json
